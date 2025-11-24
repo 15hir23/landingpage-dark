@@ -5,7 +5,6 @@ import AdvancedFeatures from './components/AdvancedFeatures';
 // import Platform from './components/Platform';
 import CTA from './components/CTA';
 import Footer from './components/Footer';
-import CustomCursor from './components/CustomCursor';
 import './App.css';
 
 function App() {
@@ -38,7 +37,6 @@ function App() {
   return (
     <div className="App bg-black">
       <BackgroundCanvas />
-      <CustomCursor />
       <iframe 
         src="/try.html" 
         style={{
