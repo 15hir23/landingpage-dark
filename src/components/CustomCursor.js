@@ -5,9 +5,11 @@ import './CustomCursor.css';
 const CustomCursor = () => {
     const [isHovering, setIsHovering] = useState(false);
     const [isClicking, setIsClicking] = useState(false);
+    const [isVisible, setIsVisible] = useState(false);
     
-    const cursorX = useMotionValue(-100);
-    const cursorY = useMotionValue(-100);
+    // Initialize cursor position to center of screen or current mouse position
+    const cursorX = useMotionValue(typeof window !== 'undefined' ? window.innerWidth / 2 : 0);
+    const cursorY = useMotionValue(typeof window !== 'undefined' ? window.innerHeight / 2 : 0);
     
     // More responsive spring configuration - higher stiffness for faster response
     const springConfig = { damping: 25, stiffness: 1200, mass: 0.3 };
@@ -15,9 +17,22 @@ const CustomCursor = () => {
     const cursorYSpring = useSpring(cursorY, springConfig);
 
     useEffect(() => {
+        // Initialize cursor position to center of viewport
+        const initCursor = () => {
+            cursorX.set(window.innerWidth / 2);
+            cursorY.set(window.innerHeight / 2);
+            setIsVisible(true);
+        };
+        
+        // Initialize immediately
+        initCursor();
+        
         const moveCursor = (e) => {
             cursorX.set(e.clientX);
             cursorY.set(e.clientY);
+            if (!isVisible) {
+                setIsVisible(true);
+            }
         };
 
         const handleMouseDown = () => setIsClicking(true);
@@ -66,17 +81,21 @@ const CustomCursor = () => {
             document.removeEventListener('mouseout', handleMouseOut, true);
             document.body.style.cursor = 'auto';
         };
-    }, [cursorX, cursorY]);
+    }, [cursorX, cursorY, isVisible]);
 
     return (
         <>
             {/* Main cursor dot */}
             <motion.div
-                className={`custom-cursor ${isHovering ? 'hover' : ''} ${isClicking ? 'click' : ''}`}
+                className={`custom-cursor ${isHovering ? 'hover' : ''} ${isClicking ? 'click' : ''} ${isVisible ? 'visible' : ''}`}
                 style={{
                     x: cursorXSpring,
                     y: cursorYSpring,
+                    opacity: isVisible ? 1 : 0,
                 }}
+                initial={{ opacity: 0 }}
+                animate={{ opacity: isVisible ? 1 : 0 }}
+                transition={{ duration: 0.3 }}
             >
                 <div className="cursor-dot" />
                 <div className="cursor-ring" />
