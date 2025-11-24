@@ -28,12 +28,44 @@ const CustomCursor = () => {
         initCursor();
         
         const moveCursor = (e) => {
+            // Track mouse position globally, including over iframes
             cursorX.set(e.clientX);
             cursorY.set(e.clientY);
             if (!isVisible) {
                 setIsVisible(true);
             }
         };
+        
+        // Also listen on document to catch events from iframes
+        const moveCursorDocument = (e) => {
+            cursorX.set(e.clientX);
+            cursorY.set(e.clientY);
+            if (!isVisible) {
+                setIsVisible(true);
+            }
+        };
+        
+        // Listen for mouse coordinates from iframe
+        const handleMessage = (event) => {
+            if (event.data && event.data.type === 'cursor-move') {
+                // Adjust coordinates if needed (iframe might have offset)
+                const iframe = document.querySelector('iframe[src="/try.html"]');
+                if (iframe) {
+                    const rect = iframe.getBoundingClientRect();
+                    // Coordinates from iframe are relative to iframe, need to add offset
+                    cursorX.set(event.data.x + rect.left);
+                    cursorY.set(event.data.y + rect.top);
+                } else {
+                    cursorX.set(event.data.x);
+                    cursorY.set(event.data.y);
+                }
+                if (!isVisible) {
+                    setIsVisible(true);
+                }
+            }
+        };
+        
+        window.addEventListener('message', handleMessage);
 
         const handleMouseDown = () => setIsClicking(true);
         const handleMouseUp = () => setIsClicking(false);
@@ -64,22 +96,48 @@ const CustomCursor = () => {
             setIsHovering(false);
         };
 
-        window.addEventListener('mousemove', moveCursor);
-        window.addEventListener('mousedown', handleMouseDown);
-        window.addEventListener('mouseup', handleMouseUp);
+        // Add listeners to both window and document for better iframe support
+        window.addEventListener('mousemove', moveCursor, true);
+        document.addEventListener('mousemove', moveCursorDocument, true);
+        window.addEventListener('mousedown', handleMouseDown, true);
+        window.addEventListener('mouseup', handleMouseUp, true);
         document.addEventListener('mouseover', handleMouseOver, true);
         document.addEventListener('mouseout', handleMouseOut, true);
 
-        // Hide default cursor
+        // Hide default cursor on body and html
         document.body.style.cursor = 'none';
+        document.documentElement.style.cursor = 'none';
+        
+        // Also hide cursor on iframes
+        const hideIframeCursor = () => {
+            const iframes = document.querySelectorAll('iframe');
+            iframes.forEach(iframe => {
+                try {
+                    if (iframe.contentDocument) {
+                        iframe.contentDocument.body.style.cursor = 'none';
+                        iframe.contentDocument.documentElement.style.cursor = 'none';
+                    }
+                } catch (e) {
+                    // Cross-origin iframe, can't access
+                }
+            });
+        };
+        
+        // Try to hide cursor in iframe after it loads
+        setTimeout(hideIframeCursor, 1000);
+        window.addEventListener('load', hideIframeCursor);
 
         return () => {
-            window.removeEventListener('mousemove', moveCursor);
-            window.removeEventListener('mousedown', handleMouseDown);
-            window.removeEventListener('mouseup', handleMouseUp);
+            window.removeEventListener('mousemove', moveCursor, true);
+            document.removeEventListener('mousemove', moveCursorDocument, true);
+            window.removeEventListener('mousedown', handleMouseDown, true);
+            window.removeEventListener('mouseup', handleMouseUp, true);
             document.removeEventListener('mouseover', handleMouseOver, true);
             document.removeEventListener('mouseout', handleMouseOut, true);
+            window.removeEventListener('message', handleMessage);
+            window.removeEventListener('load', hideIframeCursor);
             document.body.style.cursor = 'auto';
+            document.documentElement.style.cursor = 'auto';
         };
     }, [cursorX, cursorY, isVisible]);
 

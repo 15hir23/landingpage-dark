@@ -48,7 +48,8 @@ function App() {
           display: 'block',
           position: 'relative',
           zIndex: 10,
-          backgroundColor: 'transparent'
+          backgroundColor: 'transparent',
+          pointerEvents: 'auto'
         }}
         title="SourceSmart AI"
       />

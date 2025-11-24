@@ -17,6 +17,21 @@
   <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
 
   <style>
+    /* Hide default cursor - parent cursor will be used */
+    html, body {
+      cursor: none !important;
+    }
+    
+    /* Ensure interactive elements still work */
+    a, button, input, textarea, select, [role="button"], [onclick] {
+      cursor: none !important;
+    }
+    
+    /* Make sure iframe doesn't block parent cursor */
+    iframe {
+      pointer-events: auto;
+    }
+
     #three-canvas {
       position: fixed;
       top: 0;
@@ -690,6 +705,29 @@
   </div>
 
   <script>
+    // ========== MOUSE TRACKING FOR PARENT CURSOR ==========
+    // Send mouse coordinates to parent window for cursor tracking
+    document.addEventListener('mousemove', (e) => {
+      if (window.parent && window.parent !== window) {
+        window.parent.postMessage({
+          type: 'cursor-move',
+          x: e.clientX,
+          y: e.clientY
+        }, '*');
+      }
+    }, true);
+    
+    // Also send on mouse enter to ensure cursor appears
+    document.addEventListener('mouseenter', (e) => {
+      if (window.parent && window.parent !== window) {
+        window.parent.postMessage({
+          type: 'cursor-move',
+          x: e.clientX || window.innerWidth / 2,
+          y: e.clientY || window.innerHeight / 2
+        }, '*');
+      }
+    }, true);
+
     // ========== INTRO SLIDE ANIMATION ==========
     let currentSlide = 0;
     const slides = document.querySelectorAll('.intro-slide');
