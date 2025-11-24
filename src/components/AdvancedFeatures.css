@@ -465,21 +465,21 @@
         height: auto;
         padding-bottom: 6rem;
         overflow: visible;
-    }
+}
 
     .feature-card-carousel {
         width: 90%;
         max-width: 380px;
         padding: 1.5rem 1.25rem;
-    }
+}
 
     .feature-card-carousel.active {
         position: relative;
-    }
+}
 
     .feature-title {
         font-size: 1.25rem;
-    }
+}
 
     .feature-demo {
         padding-top: 0.75rem;

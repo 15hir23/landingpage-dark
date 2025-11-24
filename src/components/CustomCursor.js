@@ -9,7 +9,8 @@ const CustomCursor = () => {
     const cursorX = useMotionValue(-100);
     const cursorY = useMotionValue(-100);
     
-    const springConfig = { damping: 25, stiffness: 700 };
+    // More responsive spring configuration - higher stiffness for faster response
+    const springConfig = { damping: 25, stiffness: 1200, mass: 0.3 };
     const cursorXSpring = useSpring(cursorX, springConfig);
     const cursorYSpring = useSpring(cursorY, springConfig);
 

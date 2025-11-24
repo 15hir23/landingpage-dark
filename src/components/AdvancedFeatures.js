@@ -172,16 +172,16 @@ const AdvancedFeatures = () => {
     // Auto-rotate carousel
     useEffect(() => {
         if (!inView || !isAutoPlaying) return;
-
+        
         autoPlayRef.current = setInterval(() => {
             setActiveIndex(prev => (prev + 1) % advancedFeatures.length);
-        }, 4000);
-
-        return () => {
+            }, 4000);
+            
+            return () => {
             if (autoPlayRef.current) {
                 clearInterval(autoPlayRef.current);
-            }
-        };
+                }
+            };
     }, [inView, isAutoPlaying, advancedFeatures.length]);
 
     // Show demo after 2 seconds for active card (only if not manually collapsed)
@@ -228,37 +228,37 @@ const AdvancedFeatures = () => {
             case 'classification':
                 return (
                     <div className="demo-classification">
-                        {feature.demo.items.map((item, i) => (
-                            <motion.div
-                                key={i}
+                            {feature.demo.items.map((item, i) => (
+                                <motion.div
+                                    key={i}
                                 className="demo-classification-item"
                                 initial={{ opacity: 0, x: -10 }}
-                                animate={{ opacity: 1, x: 0 }}
-                                transition={{ delay: i * 0.1 }}
-                            >
+                                    animate={{ opacity: 1, x: 0 }}
+                                    transition={{ delay: i * 0.1 }}
+                                >
                                 <div className="demo-item-text">{item.text}</div>
                                 <div className="demo-item-badge">{item.category}</div>
                                 <div className="demo-item-confidence">{item.confidence}%</div>
-                            </motion.div>
-                        ))}
+                                </motion.div>
+                            ))}
                     </div>
                 );
 
             case 'workflow':
                 return (
                     <div className="demo-workflow">
-                        {feature.demo.steps.map((step, i) => (
-                            <motion.div
-                                key={i}
+                            {feature.demo.steps.map((step, i) => (
+                                <motion.div
+                                    key={i}
                                 className={`demo-workflow-step ${i < 2 ? 'completed' : i === 2 ? 'active' : ''}`}
                                 initial={{ opacity: 0, scale: 0.8 }}
                                 animate={{ opacity: 1, scale: 1 }}
-                                transition={{ delay: i * 0.15 }}
-                            >
+                                    transition={{ delay: i * 0.15 }}
+                                >
                                 <div className="workflow-step-dot" />
                                 <span>{step}</span>
-                            </motion.div>
-                        ))}
+                                </motion.div>
+                            ))}
                     </div>
                 );
 
@@ -291,15 +291,15 @@ const AdvancedFeatures = () => {
                     <div className="demo-actions">
                         {feature.demo.shortcuts.map((shortcut, i) => (
                             <motion.div
-                                key={i}
+                                    key={i}
                                 className="demo-action-shortcut"
                                 initial={{ opacity: 0, y: 10 }}
                                 animate={{ opacity: 1, y: 0 }}
-                                transition={{ delay: i * 0.1 }}
+                                    transition={{ delay: i * 0.1 }}
                             >
                                 {shortcut}
                             </motion.div>
-                        ))}
+                            ))}
                     </div>
                 );
 
@@ -319,7 +319,7 @@ const AdvancedFeatures = () => {
                             {feature.demo.steps.map((step, i) => (
                                 <div key={i} className={`demo-step ${step.includes('✓') ? 'completed' : ''}`}>
                                     {step}
-                                </div>
+                                    </div>
                             ))}
                         </div>
                     </div>
@@ -375,7 +375,7 @@ const AdvancedFeatures = () => {
                         className="carousel-btn"
                         onClick={nextCard}
                         aria-label="Next"
-                    >
+                            >
                         <ChevronRight size={20} />
                     </button>
                 </div>
@@ -452,12 +452,12 @@ const AdvancedFeatures = () => {
 
                                     <div className="feature-icon-wrapper">
                                         <Icon />
-                                    </div>
+                                </div>
 
                                     <div className="feature-header">
                                         <span className="feature-number">{String(index + 1).padStart(2, '0')}</span>
                                         <span className="feature-badge">{feature.shortDesc}</span>
-                                    </div>
+                                </div>
 
                                     <h3 className="feature-title">{feature.title}</h3>
                                     <p className="feature-description">{feature.description}</p>
@@ -467,21 +467,21 @@ const AdvancedFeatures = () => {
                                             <div key={i} className="benefit-item">
                                                 <span>✓</span>
                                                 <span>{benefit}</span>
-                                            </div>
-                                        ))}
-                                    </div>
+                                </div>
+                        ))}
+                    </div>
 
                                     {/* Demo Section */}
-                                    <AnimatePresence mode="wait">
+                        <AnimatePresence mode="wait">
                                         {(shouldShowDemo || isExpanded) && (
-                                            <motion.div
+                            <motion.div
                                                 key={`demo-${index}-${isExpanded}`}
                                                 className="feature-demo"
                                                 initial={{ opacity: 0, height: 0, marginTop: 0 }}
                                                 animate={{ opacity: 1, height: 'auto', marginTop: isMobile ? '0.75rem' : '1.5rem' }}
                                                 exit={{ opacity: 0, height: 0, marginTop: 0 }}
                                                 transition={{ duration: 0.4, ease: 'easeInOut' }}
-                                            >
+                            >
                                                 {renderDemo(feature)}
                                             </motion.div>
                                         )}
