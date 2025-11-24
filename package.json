@@ -1,0 +1,41 @@
+{
+  "name": "sourcesmart-dark-react",
+  "version": "1.0.0",
+  "description": "SourceSmart Dark Mode Landing Page with React",
+  "private": true,
+  "dependencies": {
+    "autoprefixer": "^10.4.17",
+    "framer-motion": "^10.16.16",
+    "lucide-react": "^0.554.0",
+    "postcss": "^8.4.33",
+    "react": "^18.2.0",
+    "react-dom": "^18.2.0",
+    "react-intersection-observer": "^9.5.3",
+    "react-scripts": "5.0.1",
+    "tailwindcss": "^3.4.1",
+    "three": "^0.181.2"
+  },
+  "scripts": {
+    "start": "react-scripts start",
+    "build": "react-scripts build",
+    "test": "react-scripts test",
+    "eject": "react-scripts eject"
+  },
+  "eslintConfig": {
+    "extends": [
+      "react-app"
+    ]
+  },
+  "browserslist": {
+    "production": [
+      ">0.2%",
+      "not dead",
+      "not op_mini all"
+    ],
+    "development": [
+      "last 1 chrome version",
+      "last 1 firefox version",
+      "last 1 safari version"
+    ]
+  }
+}

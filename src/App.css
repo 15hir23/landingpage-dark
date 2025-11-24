@@ -1,0 +1,16 @@
+.App {
+    min-height: 100vh;
+    position: relative;
+    overflow-x: hidden;
+    z-index: 1;
+}
+
+.app-section {
+    position: relative;
+    will-change: transform, opacity, filter;
+}
+
+.app-section:not(:first-of-type) {
+    scroll-margin-top: 80px;
+}
+

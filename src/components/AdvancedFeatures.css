@@ -1,0 +1,525 @@
+.advanced-features {
+    padding: 8rem 0;
+    position: relative;
+    z-index: 1;
+    overflow: hidden;
+    background: transparent;
+}
+
+.advanced-features::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background: radial-gradient(ellipse at center, rgba(124, 58, 237, 0.03) 0%, transparent 70%);
+    pointer-events: none;
+    z-index: -1;
+}
+
+.section-container {
+    max-width: 1600px;
+    margin: 0 auto;
+    padding: 0 2rem;
+}
+
+.section-header {
+    text-align: center;
+    margin-bottom: 4rem;
+}
+
+.section-badge {
+    display: inline-block;
+    padding: 0.5rem 1.25rem;
+    background: rgba(255, 255, 255, 0.05);
+    border: 1px solid rgba(255, 255, 255, 0.1);
+    border-radius: 50px;
+    font-size: 0.875rem;
+    font-weight: 600;
+    color: rgba(255, 255, 255, 0.8);
+    margin-bottom: 1.5rem;
+    cursor: default;
+    backdrop-filter: blur(10px);
+}
+
+.section-description {
+    font-size: 1.125rem;
+    color: rgba(255, 255, 255, 0.6);
+    max-width: 700px;
+    margin: 0 auto;
+    line-height: 1.7;
+}
+
+/* Carousel Controls */
+.carousel-controls {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    gap: 1rem;
+    margin-bottom: 3rem;
+}
+
+.carousel-btn {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 48px;
+    height: 48px;
+    border-radius: 12px;
+    background: rgba(255, 255, 255, 0.05);
+    border: 1px solid rgba(255, 255, 255, 0.1);
+    color: var(--text-primary);
+    cursor: pointer;
+    transition: all 0.3s ease;
+}
+
+.carousel-btn:hover {
+    background: rgba(255, 255, 255, 0.1);
+    border-color: rgba(255, 255, 255, 0.2);
+    transform: scale(1.05);
+}
+
+/* Carousel Container */
+.carousel-container {
+    position: relative;
+    min-height: 600px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    perspective: 1200px;
+    padding-bottom: 4rem;
+    overflow: visible;
+}
+
+.feature-card-carousel {
+    position: absolute;
+    width: 420px;
+    padding: 2.5rem;
+    background: rgba(255, 255, 255, 0.02);
+    border: 1px solid rgba(255, 255, 255, 0.08);
+    border-radius: 24px;
+    backdrop-filter: blur(20px);
+    transition: all 0.5s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.feature-card-carousel.active {
+    position: relative;
+    margin: 0 auto;
+}
+
+.feature-card-carousel.active {
+    box-shadow: 0 20px 60px rgba(0, 0, 0, 0.4),
+                0 0 0 1px rgba(255, 255, 255, 0.1) inset;
+}
+
+.feature-card-carousel.back {
+    filter: blur(2px);
+}
+
+.feature-card-content {
+    position: relative;
+    z-index: 1;
+}
+
+.expand-toggle-btn {
+    position: absolute;
+    top: 1.25rem;
+    right: 1.25rem;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 32px;
+    height: 32px;
+    border-radius: 8px;
+    background: rgba(255, 255, 255, 0.08);
+    border: 1px solid rgba(255, 255, 255, 0.15);
+    color: var(--text-primary);
+    cursor: pointer;
+    transition: all 0.3s ease;
+    z-index: 10;
+}
+
+.expand-toggle-btn:hover {
+    background: rgba(255, 255, 255, 0.12);
+    border-color: rgba(255, 255, 255, 0.25);
+    transform: scale(1.1);
+}
+
+.feature-card-carousel.expanded {
+    min-height: auto;
+}
+
+/* Custom Icons */
+.custom-icon {
+    width: 64px;
+    height: 64px;
+    color: var(--text-primary);
+    opacity: 0.9;
+}
+
+.feature-icon-wrapper {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 80px;
+    height: 80px;
+    border-radius: 16px;
+    background: rgba(255, 255, 255, 0.05);
+    border: 1px solid rgba(255, 255, 255, 0.1);
+    margin-bottom: 1.5rem;
+}
+
+.feature-header {
+    display: flex;
+    align-items: center;
+    gap: 0.75rem;
+    margin-bottom: 1rem;
+}
+
+.feature-number {
+    font-size: 0.75rem;
+    font-weight: 700;
+    color: rgba(255, 255, 255, 0.4);
+    letter-spacing: 0.1em;
+}
+
+.feature-badge {
+    font-size: 0.75rem;
+    font-weight: 600;
+    padding: 0.25rem 0.75rem;
+    background: rgba(255, 255, 255, 0.08);
+    border: 1px solid rgba(255, 255, 255, 0.15);
+    border-radius: 6px;
+    color: rgba(255, 255, 255, 0.8);
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+}
+
+.feature-title {
+    font-size: 1.5rem;
+    font-weight: 700;
+    color: var(--text-primary);
+    margin-bottom: 0.75rem;
+    line-height: 1.3;
+    letter-spacing: -0.02em;
+}
+
+.feature-description {
+    font-size: 0.9375rem;
+    color: var(--text-secondary);
+    line-height: 1.6;
+    margin-bottom: 1.5rem;
+}
+
+.feature-benefits {
+    display: flex;
+    flex-direction: column;
+    gap: 0.75rem;
+    margin-bottom: 1.5rem;
+}
+
+.benefit-item {
+    display: flex;
+    align-items: center;
+    gap: 0.75rem;
+    font-size: 0.875rem;
+    color: var(--text-secondary);
+}
+
+.benefit-item span:first-child {
+    color: var(--success);
+    font-weight: 700;
+}
+
+/* Demo Section */
+.feature-demo {
+    padding-top: 1.5rem;
+    border-top: 1px solid rgba(255, 255, 255, 0.1);
+    overflow: hidden;
+}
+
+/* Classification Demo */
+.demo-classification {
+    display: flex;
+    flex-direction: column;
+    gap: 0.75rem;
+}
+
+.demo-classification-item {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 0.75rem 1rem;
+    background: rgba(255, 255, 255, 0.03);
+    border: 1px solid rgba(255, 255, 255, 0.05);
+    border-radius: 8px;
+}
+
+.demo-item-text {
+    flex: 1;
+    font-size: 0.875rem;
+    color: var(--text-primary);
+}
+
+.demo-item-badge {
+    padding: 0.25rem 0.5rem;
+    background: rgba(255, 255, 255, 0.08);
+    border-radius: 4px;
+    font-size: 0.75rem;
+    color: var(--text-secondary);
+    margin-right: 0.5rem;
+}
+
+.demo-item-confidence {
+    font-size: 0.75rem;
+    color: var(--success);
+    font-weight: 600;
+}
+
+/* Workflow Demo */
+.demo-workflow {
+    display: flex;
+    flex-direction: column;
+    gap: 0.75rem;
+}
+
+.demo-workflow-step {
+    display: flex;
+    align-items: center;
+    gap: 0.75rem;
+    padding: 0.75rem;
+    background: rgba(255, 255, 255, 0.03);
+    border-radius: 8px;
+}
+
+.demo-workflow-step.completed .workflow-step-dot {
+    background: var(--success);
+    box-shadow: 0 0 12px var(--success);
+}
+
+.demo-workflow-step.active .workflow-step-dot {
+    background: var(--accent-primary);
+    animation: pulse 2s ease-in-out infinite;
+}
+
+.workflow-step-dot {
+    width: 12px;
+    height: 12px;
+    border-radius: 50%;
+    background: rgba(255, 255, 255, 0.2);
+    flex-shrink: 0;
+}
+
+.demo-workflow-step span {
+    font-size: 0.875rem;
+    color: var(--text-secondary);
+}
+
+@keyframes pulse {
+    0%, 100% { opacity: 1; transform: scale(1); }
+    50% { opacity: 0.7; transform: scale(1.2); }
+}
+
+/* Risk Demo */
+.demo-risk {
+    text-align: center;
+}
+
+.demo-risk-score {
+    font-size: 3rem;
+    font-weight: 800;
+    color: var(--text-primary);
+    margin-bottom: 0.5rem;
+}
+
+.demo-risk-status {
+    font-size: 1rem;
+    color: var(--success);
+    font-weight: 600;
+    margin-bottom: 1rem;
+}
+
+.demo-risk-factors {
+    display: flex;
+    flex-direction: column;
+    gap: 0.5rem;
+}
+
+.demo-risk-factor {
+    font-size: 0.8125rem;
+    color: var(--text-secondary);
+    padding: 0.5rem;
+    background: rgba(255, 255, 255, 0.03);
+    border-radius: 6px;
+}
+
+/* Notifications Demo */
+.demo-notifications {
+    text-align: center;
+}
+
+.demo-notif-count {
+    font-size: 2rem;
+    font-weight: 700;
+    color: var(--text-primary);
+    margin-bottom: 0.75rem;
+}
+
+.demo-notif-types {
+    display: flex;
+    justify-content: center;
+    gap: 1rem;
+}
+
+.notif-urgent,
+.notif-info {
+    padding: 0.5rem 1rem;
+    border-radius: 8px;
+    font-size: 0.8125rem;
+    font-weight: 600;
+}
+
+.notif-urgent {
+    background: rgba(239, 68, 68, 0.2);
+    color: #ef4444;
+}
+
+.notif-info {
+    background: rgba(59, 130, 246, 0.2);
+    color: #3b82f6;
+}
+
+/* Actions Demo */
+.demo-actions {
+    display: flex;
+    flex-direction: column;
+    gap: 0.75rem;
+}
+
+.demo-action-shortcut {
+    padding: 0.75rem 1rem;
+    background: rgba(255, 255, 255, 0.05);
+    border: 1px solid rgba(255, 255, 255, 0.1);
+    border-radius: 8px;
+    font-size: 0.875rem;
+    color: var(--text-primary);
+    font-family: 'JetBrains Mono', monospace;
+    text-align: center;
+}
+
+/* Onboarding Demo */
+.demo-onboarding {
+    text-align: center;
+}
+
+.demo-progress-bar {
+    width: 100%;
+    height: 8px;
+    background: rgba(255, 255, 255, 0.1);
+    border-radius: 4px;
+    overflow: hidden;
+    margin-bottom: 0.75rem;
+}
+
+.demo-progress-fill {
+    height: 100%;
+    background: var(--accent-primary);
+    border-radius: 4px;
+}
+
+.demo-progress-text {
+    font-size: 1.25rem;
+    font-weight: 700;
+    color: var(--text-primary);
+    margin-bottom: 1rem;
+}
+
+.demo-steps {
+    display: flex;
+    flex-direction: column;
+    gap: 0.5rem;
+}
+
+.demo-step {
+    font-size: 0.8125rem;
+    color: var(--text-secondary);
+    padding: 0.5rem;
+    background: rgba(255, 255, 255, 0.03);
+    border-radius: 6px;
+}
+
+.demo-step.completed {
+    color: var(--success);
+}
+
+/* Responsive */
+@media (max-width: 768px) {
+    .advanced-features {
+        padding: 4rem 0;
+        overflow: visible;
+    }
+
+    .carousel-container {
+        min-height: 500px;
+        height: auto;
+        padding-bottom: 6rem;
+        overflow: visible;
+    }
+
+    .feature-card-carousel {
+        width: 90%;
+        max-width: 380px;
+        padding: 1.5rem 1.25rem;
+    }
+
+    .feature-card-carousel.active {
+        position: relative;
+    }
+
+    .feature-title {
+        font-size: 1.25rem;
+    }
+
+    .feature-demo {
+        padding-top: 0.75rem;
+        margin-top: 0.75rem !important;
+    }
+
+    .demo-classification-item {
+        padding: 0.5rem 0.75rem;
+    }
+
+    .demo-workflow-step {
+        padding: 0.5rem;
+    }
+
+    .demo-risk-score {
+        font-size: 2rem;
+        margin-bottom: 0.375rem;
+    }
+
+    .demo-risk-status {
+        margin-bottom: 0.75rem;
+    }
+
+    .demo-risk-factor {
+        padding: 0.375rem;
+    }
+
+    .demo-notif-count {
+        margin-bottom: 0.5rem;
+    }
+
+    .demo-action-shortcut {
+        padding: 0.5rem 0.75rem;
+    }
+
+    .demo-progress-text {
+        margin-bottom: 0.75rem;
+    }
+
+    .demo-step {
+        padding: 0.375rem;
+    }
+}

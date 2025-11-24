@@ -1,0 +1,1033 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>SourceSmart AI - AI-Powered Procurement & Supply Chain</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <script type="module">
+    import { createIcons, Search, Mic, ArrowUp, Zap, MessageSquare, Image, Plus, Menu } from 'https://unpkg.com/lucide@latest/dist/umd/lucide.js';
+    document.addEventListener('DOMContentLoaded', () => {
+      createIcons({
+        icons: { Search, Mic, ArrowUp, Zap, MessageSquare, Image, Plus, Menu }
+      });
+    });
+  </script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
+
+  <style>
+    #three-canvas {
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      z-index: 0;
+      opacity: 0.9;
+    }
+
+    #ui-overlay {
+      position: relative;
+      z-index: 10;
+      background-color: transparent;
+    }
+
+    .animate-bounce-slow {
+      animation: bounce 2s infinite;
+    }
+
+    @keyframes bounce {
+
+      0%,
+      100% {
+        transform: translateY(-50%);
+        animation-timing-function: cubic-bezier(0.8, 0, 1, 1);
+      }
+
+      50% {
+        transform: translateY(0);
+        animation-timing-function: cubic-bezier(0, 0, 0.2, 1);
+      }
+    }
+
+    /* Storytelling Intro Animations */
+    #intro-container {
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      z-index: 100;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      overflow: hidden;
+      perspective: 1000px;
+    }
+
+    #intro-container.hidden {
+      display: none;
+    }
+
+    /* Fixed viewport window for slides */
+    .intro-viewport {
+      position: relative;
+      width: 100%;
+      max-width: 1000px;
+      height: 400px;
+      overflow: hidden;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+
+    .intro-slide {
+      position: absolute;
+      width: 100%;
+      height: 100%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      transform: translateY(100%);
+      opacity: 0;
+      transition: all 1.2s cubic-bezier(0.34, 1.56, 0.64, 1);
+    }
+
+    .intro-slide.active {
+      transform: translateY(0);
+      opacity: 1;
+      transition: all 1s cubic-bezier(0.25, 0.46, 0.45, 0.94);
+    }
+
+    .intro-slide.exit {
+      transform: translateY(-100%);
+      opacity: 0;
+      transition: all 1s cubic-bezier(0.55, 0.085, 0.68, 0.53);
+    }
+
+    .intro-content {
+      text-align: center;
+      padding: 2rem;
+      max-width: 900px;
+      transform: scale(0.95);
+      transition: transform 0.6s ease-out;
+    }
+
+    .intro-slide.active .intro-content {
+      transform: scale(1);
+    }
+
+    .fade-in {
+      animation: fadeIn 0.8s ease-in forwards;
+    }
+
+    @keyframes fadeIn {
+      from {
+        opacity: 0;
+        transform: translateY(20px);
+      }
+
+      to {
+        opacity: 1;
+        transform: translateY(0);
+      }
+    }
+
+    .main-content {
+      opacity: 0;
+      transform: translateY(50px);
+      transition: all 1s ease-out;
+    }
+
+    .main-content.show {
+      opacity: 1;
+      transform: translateY(0);
+    }
+
+    .feature-item {
+      opacity: 0;
+      transform: translateX(-20px);
+      animation: slideInLeft 0.6s ease-out forwards;
+    }
+
+    .feature-item:nth-child(1) {
+      animation-delay: 0.1s;
+    }
+
+    .feature-item:nth-child(2) {
+      animation-delay: 0.2s;
+    }
+
+    .feature-item:nth-child(3) {
+      animation-delay: 0.3s;
+    }
+
+    .feature-item:nth-child(4) {
+      animation-delay: 0.4s;
+    }
+
+    @keyframes slideInLeft {
+      to {
+        opacity: 1;
+        transform: translateX(0);
+      }
+    }
+
+    /* Description Slider Animation */
+    .description-viewport {
+      position: relative;
+      height: 120px;
+      /* Fixed height for text block */
+      overflow: hidden;
+      perspective: 1000px;
+      margin-bottom: 2rem;
+    }
+
+    .description-slide {
+      position: absolute;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      opacity: 0;
+      transform: translateY(100%);
+      transition: all 1s cubic-bezier(0.34, 1.56, 0.64, 1);
+    }
+
+    .description-slide.active {
+      opacity: 1;
+      transform: translateY(0);
+      transition: all 1s cubic-bezier(0.25, 0.46, 0.45, 0.94);
+    }
+
+    .description-slide.exit {
+      opacity: 0;
+      transform: translateY(-100%);
+      transition: all 1s cubic-bezier(0.55, 0.085, 0.68, 0.53);
+    }
+  </style>
+</head>
+
+<body class="bg-black text-white font-sans antialiased overflow-x-hidden">
+
+  <canvas id="three-canvas"></canvas>
+
+  <!-- Storytelling Intro Slides -->
+  <div id="intro-container">
+    <!-- Skip Button -->
+    <button id="skip-intro"
+      class="fixed top-8 right-8 z-[110] px-6 py-2 text-sm font-medium text-white/80 hover:text-white border border-white/30 hover:border-white/50 rounded-full bg-white/10 hover:bg-white/20 backdrop-blur-sm transition-all hover:scale-105">
+      Skip Intro →
+    </button>
+
+    <div class="intro-viewport">
+      <!-- Slide 1: Welcome -->
+      <div class="intro-slide active" data-slide="0">
+        <div class="intro-content">
+          <h1 class="text-7xl md:text-8xl font-extrabold mb-6 tracking-tighter fade-in leading-tight">
+            <span
+              class="bg-clip-text text-transparent bg-gradient-to-b from-white via-white to-gray-400 drop-shadow-sm">
+              Welcome to<br />SourceSmart AI
+            </span>
+          </h1>
+          <p class="text-2xl text-gray-300 fade-in" style="animation-delay: 0.3s;">The Future of Procurement</p>
+        </div>
+      </div>
+
+      <!-- Slide 2: Value Prop 1 -->
+      <div class="intro-slide" data-slide="1">
+        <div class="intro-content">
+          <h2 class="text-6xl md:text-7xl font-extrabold mb-6 tracking-tight fade-in leading-tight">
+            <span
+              class="bg-clip-text text-transparent bg-gradient-to-b from-white via-white to-gray-400 drop-shadow-sm">
+              Intelligent Procurement
+            </span>
+          </h2>
+          <p class="text-xl md:text-2xl text-gray-300 leading-relaxed fade-in" style="animation-delay: 0.2s;">
+            Harness the power of AI to streamline supplier discovery, automate RFQ management, and make data-driven
+            decisions that transform your supply chain.
+          </p>
+        </div>
+      </div>
+
+      <!-- Slide 3: Value Prop 2 -->
+      <div class="intro-slide" data-slide="2">
+        <div class="intro-content">
+          <h2 class="text-6xl md:text-7xl font-extrabold mb-6 tracking-tight fade-in leading-tight">
+            <span
+              class="bg-clip-text text-transparent bg-gradient-to-b from-white via-white to-gray-400 drop-shadow-sm">
+              Reduce Costs, Maximize Value
+            </span>
+          </h2>
+          <p class="text-xl md:text-2xl text-gray-300 leading-relaxed fade-in" style="animation-delay: 0.2s;">
+            Our advanced analytics engine identifies cost-saving opportunities, optimizes supplier relationships, and
+            delivers actionable insights in real-time.
+          </p>
+        </div>
+      </div>
+
+      <!-- Slide 4: Value Prop 3 -->
+      <div class="intro-slide" data-slide="3">
+        <div class="intro-content">
+          <h2 class="text-6xl md:text-7xl font-extrabold mb-6 tracking-tight fade-in leading-tight">
+            <span
+              class="bg-clip-text text-transparent bg-gradient-to-b from-white via-white to-gray-400 drop-shadow-sm">
+              Your Supply Chain, Reimagined
+            </span>
+          </h2>
+          <p class="text-xl md:text-2xl text-gray-300 leading-relaxed fade-in" style="animation-delay: 0.2s;">
+            From procurement to delivery, SourceSmart AI provides end-to-end visibility and control, empowering you to
+            build a resilient, efficient supply chain.
+          </p>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div id="ui-overlay" class="min-h-screen p-4 main-content flex flex-col">
+
+    <header class="flex justify-between items-center py-4 px-8 relative z-20">
+      <div class="text-2xl font-bold tracking-wider">
+        SourceSmart AI
+      </div>
+      <nav class="hidden md:flex space-x-6 text-sm font-medium">
+        <a href="#" class="hover:text-gray-400 transition-colors">Home</a>
+        <a href="#" class="hover:text-gray-400 transition-colors">Features</a>
+        <a href="#" class="hover:text-gray-400 transition-colors">How It Works</a>
+        <a href="#" class="hover:text-gray-400 transition-colors">Pricing</a>
+        <a href="#" class="hover:text-gray-400 transition-colors">Blog</a>
+      </nav>
+      <div class="flex space-x-4 items-center">
+        <button class="text-sm font-medium hover:text-gray-400 transition-colors">Sign In</button>
+        <button
+          class="px-4 py-2 text-sm font-semibold rounded-md bg-white text-black hover:bg-gray-200 transition-colors">Start
+          Free Trial</button>
+      </div>
+    </header>
+
+    <!-- Main Content Container (Centered) -->
+    <div class="flex-1 flex items-center justify-center z-20 w-full max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+      <div class="grid grid-cols-1 lg:grid-cols-2 gap-12 items-center w-full">
+
+        <!-- Left Column: Text Content -->
+        <main class="text-left relative z-20">
+          <h1 class="text-5xl md:text-7xl font-extrabold mb-6 tracking-tighter leading-tight">
+            <span
+              class="bg-clip-text text-transparent bg-gradient-to-b from-white via-white to-gray-400 drop-shadow-sm">
+              Modernize Your <br /> Procurement & Supply Chain
+            </span>
+          </h1>
+
+          <!-- Animated Description Slider -->
+          <div class="description-viewport max-w-2xl mr-auto mb-8">
+            <div class="description-slide active justify-start text-left">
+              <p class="text-lg text-gray-400">
+                SourceSmart AI is a data-driven procurement platform that streamlines supplier discovery, RFQ management, and more—helping you reduce costs and optimize your supply chain with AI.
+              </p>
+            </div>
+            <div class="description-slide justify-start text-left">
+              <p class="text-lg text-gray-400">
+                Transform your procurement process with AI-driven insights. Automate repetitive tasks, identify risks
+                early,
+                and negotiate better deals with real-time market data at your fingertips.
+              </p>
+            </div>
+            <div class="description-slide justify-start text-left">
+              <p class="text-lg text-gray-400">
+                Connect with top-tier suppliers globally. Our intelligent matching algorithms ensure you find the right
+                partners for your specific needs, reducing sourcing time by up to 70%.
+              </p>
+            </div>
+            <div class="description-slide justify-start text-left">
+              <p class="text-lg text-gray-400">
+                Gain complete visibility into your supply chain. Track performance, monitor compliance, and predict
+                disruptions before they impact your business with our advanced analytics dashboard.
+              </p>
+            </div>
+            <div class="description-slide justify-start text-left">
+              <p class="text-lg text-gray-400">
+                Empower your team with smart tools. From automated RFQs to contract management, SourceSmart AI handles
+                the
+                heavy lifting so you can focus on strategic decision-making.
+              </p>
+            </div>
+          </div>
+
+          <button
+            class="px-8 py-3 text-lg font-semibold rounded-full border border-gray-700 bg-gray-800 hover:bg-gray-700 transition-colors">
+            Start Free Trial
+          </button>
+        </main>
+
+        <!-- Right Column: Chat Interface -->
+        <section class="relative flex justify-center lg:justify-end z-20">
+          <!-- Transparent Chat Container with Features -->
+          <div class="w-full max-w-xl relative">
+
+            <!-- Main Chat Box - Transparent with Backdrop Blur -->
+            <div class="bg-black/10 backdrop-blur-md rounded-2xl p-5 shadow-2xl border border-gray-700/30 relative">
+
+              <!-- Animated Feature Message (Chat-like) -->
+              <div id="feature-message" class="mb-3 min-h-[50px] flex items-start space-x-3">
+                <div
+                  class="w-8 h-8 rounded-full bg-white/20 border border-white/30 flex items-center justify-center flex-shrink-0"
+                  id="feature-icon">
+                  <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none"
+                    stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"
+                    class="text-white">
+                    <polygon points="13 2 3 14 12 14 11 22 21 10 12 10 13 2"></polygon>
+                  </svg>
+                </div>
+                <div class="flex-1 pt-1">
+                  <h3 class="font-semibold text-sm mb-0.5" id="feature-title"></h3>
+                  <p class="text-xs text-gray-300 leading-snug" id="feature-description"></p>
+                </div>
+              </div>
+
+              <textarea
+                class="w-full h-10 bg-transparent text-white text-sm placeholder-gray-500 focus:outline-none resize-none leading-relaxed"
+                placeholder="Ask me anything..."></textarea>
+
+              <!-- Divider -->
+              <div class="w-full h-px bg-gradient-to-r from-transparent via-gray-600/50 to-transparent my-3"></div>
+
+              <!-- Control Buttons -->
+              <div class="flex justify-between items-center">
+                <div class="flex items-center space-x-2">
+                  <button
+                    class="p-1.5 rounded-full bg-white/10 hover:bg-white/20 transition-all hover:scale-110 backdrop-blur-sm">
+                    <i data-lucide="plus" class="w-3.5 h-3.5 text-white"></i>
+                  </button>
+                  <button
+                    class="flex items-center space-x-2 px-3 py-1.5 rounded-full bg-white/10 hover:bg-white/20 transition-all hover:scale-105 backdrop-blur-sm">
+                    <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none"
+                      stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"
+                      class="text-white">
+                      <circle cx="11" cy="11" r="8"></circle>
+                      <line x1="21" y1="21" x2="16.65" y2="16.65"></line>
+                    </svg>
+                    <span class="text-[10px] font-medium uppercase tracking-wide">Search</span>
+                  </button>
+                </div>
+                <div class="flex space-x-2">
+                  <button
+                    class="p-1.5 rounded-full bg-white/10 hover:bg-white/20 transition-all hover:scale-110 backdrop-blur-sm">
+                    <i data-lucide="mic" class="w-3.5 h-3.5 text-white"></i>
+                  </button>
+                  <button
+                    class="p-1.5 rounded-full bg-white/10 hover:bg-white/20 transition-all hover:scale-110 backdrop-blur-sm">
+                    <i data-lucide="arrow-up" class="w-3.5 h-3.5 text-white"></i>
+                  </button>
+                </div>
+              </div>
+            </div>
+
+          </div>
+        </section>
+      </div>
+    </div>
+
+    <!-- Scroll Down Indicator -->
+    <div class="absolute bottom-8 left-1/2 transform -translate-x-1/2 flex flex-col items-center z-20">
+      <i data-lucide="arrow-up" class="w-8 h-8 rotate-180 text-gray-500 mb-1 animate-bounce-slow"></i>
+      <p class="text-sm text-gray-400">Scroll down ↓</p>
+    </div>
+
+  </div>
+
+  <script>
+    // ========== INTRO SLIDE ANIMATION ==========
+    let currentSlide = 0;
+    const slides = document.querySelectorAll('.intro-slide');
+    const totalSlides = slides.length;
+    const mainContent = document.querySelector('.main-content');
+    const introContainer = document.getElementById('intro-container');
+    const skipButton = document.getElementById('skip-intro');
+
+    // Declare slideInterval in outer scope
+    let slideInterval;
+
+    // Skip intro function
+    function skipIntro() {
+      if (slideInterval) {
+        clearInterval(slideInterval);
+      }
+      introContainer.classList.add('hidden');
+      mainContent.classList.add('show');
+      startFeatureAnimation(); // Start immediately
+    }
+
+    // Skip button click handler
+    skipButton.addEventListener('click', skipIntro);
+
+    function nextSlide() {
+      // Exit current slide
+      slides[currentSlide].classList.remove('active');
+      slides[currentSlide].classList.add('exit');
+
+      currentSlide++;
+
+      if (currentSlide < totalSlides) {
+        // Show next slide
+        setTimeout(() => {
+          slides[currentSlide].classList.add('active');
+        }, 300);
+      } else {
+        // All slides done, show main content
+        setTimeout(() => {
+          introContainer.classList.add('hidden');
+          mainContent.classList.add('show');
+          startFeatureAnimation(); // Start when intro finishes
+        }, 1000);
+      }
+    }
+
+    // Auto-advance slides
+    slideInterval = setInterval(() => {
+      if (currentSlide < totalSlides - 1) {
+        nextSlide();
+      } else {
+        nextSlide();
+        clearInterval(slideInterval);
+      }
+    }, 2000); // 2 seconds per slide
+
+    // Optional: Allow manual skip by clicking anywhere
+    document.addEventListener('click', () => {
+      if (currentSlide < totalSlides) {
+        clearInterval(slideInterval);
+        slideInterval = setInterval(() => {
+          if (currentSlide < totalSlides - 1) {
+            nextSlide();
+          } else {
+            nextSlide();
+            clearInterval(slideInterval);
+          }
+        }, 2500);
+      }
+    }, { once: true });
+
+    // ========== FEATURE TYPING ANIMATION (Chat-like) ==========
+    const features = [
+      {
+        icon: '<svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="text-white"><polygon points="13 2 3 14 12 14 11 22 21 10 12 10 13 2"></polygon></svg>',
+        title: 'AI-Powered Supplier Discovery',
+        description: 'Find the perfect suppliers with intelligent matching algorithms'
+      },
+      {
+        icon: '<svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="text-white"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"></path></svg>',
+        title: 'Automated RFQ Management',
+        description: 'Streamline your request for quotation process end-to-end'
+      },
+      {
+        icon: '<svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="text-white"><circle cx="12" cy="12" r="3"></circle><path d="M12 1v6m0 6v6m5.2-13.2-4.2 4.2m0 6 4.2 4.2M1 12h6m6 0h6m-13.2-5.2 4.2 4.2m0 6-4.2 4.2"></path></svg>',
+        title: 'Real-Time Analytics Dashboard',
+        description: 'Visualize procurement data and make informed decisions instantly'
+      },
+      {
+        icon: '<svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="text-white"><line x1="12" y1="1" x2="12" y2="23"></line><path d="M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6"></path></svg>',
+        title: 'Cost Optimization Engine',
+        description: 'Identify savings opportunities and reduce procurement costs by up to 30%'
+      }
+    ];
+
+    let currentFeatureIndex = 0;
+    let isTyping = false;
+
+    function typeText(element, text, speed = 30) {
+      return new Promise((resolve) => {
+        element.textContent = '';
+        let i = 0;
+
+        const typeInterval = setInterval(() => {
+          if (i < text.length) {
+            element.textContent += text.charAt(i);
+            i++;
+          } else {
+            clearInterval(typeInterval);
+            resolve();
+          }
+        }, speed);
+      });
+    }
+
+    async function showFeature(index) {
+      if (isTyping) return;
+      isTyping = true;
+
+      const feature = features[index];
+      const titleElement = document.getElementById('feature-title');
+      const descElement = document.getElementById('feature-description');
+      const iconContainer = document.getElementById('feature-icon');
+
+      // Update icon with inline SVG
+      iconContainer.innerHTML = feature.icon;
+
+      // Type out title
+      await typeText(titleElement, feature.title, 40);
+
+      // Small delay before description
+      await new Promise(resolve => setTimeout(resolve, 200));
+
+      // Type out description
+      await typeText(descElement, feature.description, 25);
+
+      // Wait before fading out
+      await new Promise(resolve => setTimeout(resolve, 2500));
+
+      // Fade out
+      const messageBox = document.getElementById('feature-message');
+      messageBox.style.opacity = '0';
+      messageBox.style.transition = 'opacity 0.5s';
+
+      await new Promise(resolve => setTimeout(resolve, 500));
+
+      // Reset and prepare for next
+      messageBox.style.opacity = '1';
+      titleElement.textContent = '';
+      descElement.textContent = '';
+
+      isTyping = false;
+
+      // Move to next feature
+      currentFeatureIndex = (currentFeatureIndex + 1) % features.length;
+
+      // Small delay before next feature
+      setTimeout(() => showFeature(currentFeatureIndex), 300);
+    }
+
+    // Start feature animation logic
+    let featureAnimationStarted = false;
+
+    function startFeatureAnimation() {
+      if (!featureAnimationStarted) {
+        featureAnimationStarted = true;
+        // Small buffer to ensure UI is visible
+        setTimeout(() => {
+          showFeature(0);
+        }, 500);
+      }
+    }
+
+    // Remove fixed timeout and use the function instead
+    // setTimeout(() => {
+    //   showFeature(0);
+    // }, 11000); 
+
+    // ========== DESCRIPTION SLIDER ANIMATION ==========
+    let currentDescSlide = 0;
+    const descSlides = document.querySelectorAll('.description-slide');
+    const totalDescSlides = descSlides.length;
+
+    function nextDescSlide() {
+      // Exit current slide
+      descSlides[currentDescSlide].classList.remove('active');
+      descSlides[currentDescSlide].classList.add('exit');
+
+      currentDescSlide = (currentDescSlide + 1) % totalDescSlides;
+
+      // Prepare next slide (remove exit class if it has it from previous cycle)
+      descSlides[currentDescSlide].classList.remove('exit');
+
+      // Small delay to allow exit animation to start before next one enters
+      setTimeout(() => {
+        descSlides[currentDescSlide].classList.add('active');
+      }, 50);
+    }
+
+    // Start description slider loop
+    setInterval(nextDescSlide, 5000); // Change every 5 seconds
+
+    // ========== THREE.JS SCENE SETUP ==========
+    // Scene Setup
+    const scene = new THREE.Scene();
+    const camera = new THREE.PerspectiveCamera(75, window.innerWidth / window.innerHeight, 0.1, 1000);
+    const renderer = new THREE.WebGLRenderer({ canvas: document.getElementById('three-canvas'), antialias: true });
+
+    renderer.setSize(window.innerWidth, window.innerHeight);
+    renderer.setPixelRatio(window.devicePixelRatio);
+    renderer.sortObjects = true; // Enable render order sorting for proper layering
+    scene.background = new THREE.Color(0x000000);
+
+    // Add fog for depth perception (expanded range for full screen network)
+    scene.fog = new THREE.Fog(0x000000, 8, 20);
+
+    camera.position.z = 5;
+
+    // Lighting from what.html (exact same)
+    const ambientLight = new THREE.AmbientLight(0x404040, 2);
+    scene.add(ambientLight);
+
+    const directionalLight = new THREE.DirectionalLight(0xffffff, 1);
+    directionalLight.position.set(0, 10, 5);
+    scene.add(directionalLight);
+
+    // Torus Knot from what.html (exact same specifications)
+    const geometry = new THREE.TorusKnotGeometry(1.5, 0.4, 100, 16);
+    const material = new THREE.MeshPhongMaterial({
+      color: 0x2a2a2a,       // darker base
+      emissive: 0x111111,    // low glow
+      specular: 0x444444,    // toned-down highlights
+      shininess: 40,         // softer reflections
+      wireframe: true,
+      transparent: true,
+      opacity: 0.35          // a bit more transparent
+    });
+    const torusKnot = new THREE.Mesh(geometry, material);
+    torusKnot.renderOrder = 1; // Render last (on top of everything)
+    scene.add(torusKnot);
+
+    // ========== PENTAGONAL CONTAINER (Invisible Collision Boundary) ==========
+    const pentagonRadius = 3.5; // Radius of the pentagon container
+    const pentagonHeight = 8; // Height of the pentagonal prism (extends front and back)
+
+    // Create pentagon vertices (5-sided shape)
+    const pentagonVertices = [];
+    for (let i = 0; i < 5; i++) {
+      const angle = (i * Math.PI * 2) / 5 - Math.PI / 2; // Start from top
+      pentagonVertices.push(new THREE.Vector3(
+        Math.cos(angle) * pentagonRadius,
+        Math.sin(angle) * pentagonRadius,
+        0
+      ));
+    }
+
+    // Store pentagon data for collision detection
+    const pentagonContainer = {
+      vertices: pentagonVertices,
+      center: new THREE.Vector3(0, 0, 0),
+      height: pentagonHeight,
+      radius: pentagonRadius,
+      rotation: 0
+    };
+
+    // Create filled 2D pentagon container (mesh barrier)
+    const pentagonShape = new THREE.Shape();
+
+    // Start from first vertex
+    pentagonShape.moveTo(pentagonVertices[0].x, pentagonVertices[0].y);
+
+    // Draw lines to all other vertices
+    for (let i = 1; i < pentagonVertices.length; i++) {
+      pentagonShape.lineTo(pentagonVertices[i].x, pentagonVertices[i].y);
+    }
+
+    // Close the shape
+    pentagonShape.lineTo(pentagonVertices[0].x, pentagonVertices[0].y);
+
+    const pentagonGeometry = new THREE.ShapeGeometry(pentagonShape);
+    const pentagonMaterial = new THREE.MeshBasicMaterial({
+      color: 0x000000, // Black to match background
+      transparent: true,
+      opacity: 0.95, // Higher opacity to block lines effectively
+      side: THREE.DoubleSide
+    });
+
+    const pentagonMesh = new THREE.Mesh(pentagonGeometry, pentagonMaterial);
+    pentagonMesh.renderOrder = -10; // Render far behind everything (knot is at 1, connections at 0)
+    scene.add(pentagonMesh);
+
+    // Helper function to check if a point is inside the pentagonal prism
+    function isPointInsidePentagon(point) {
+      // Check Z bounds first (height of prism)
+      if (Math.abs(point.z) > pentagonHeight / 2) {
+        return false;
+      }
+
+      // Transform point to pentagon's local space (accounting for rotation)
+      const angle = -pentagonContainer.rotation; // Negative to rotate point back
+      const cos = Math.cos(angle);
+      const sin = Math.sin(angle);
+      const localX = point.x * cos - point.y * sin;
+      const localY = point.x * sin + point.y * cos;
+
+      // Check if point is inside pentagon (2D check in XY plane using ray casting)
+      let inside = false;
+      const vertices = pentagonContainer.vertices;
+
+      for (let i = 0, j = vertices.length - 1; i < vertices.length; j = i++) {
+        const xi = vertices[i].x, yi = vertices[i].y;
+        const xj = vertices[j].x, yj = vertices[j].y;
+
+        const intersect = ((yi > localY) !== (yj > localY)) &&
+          (localX < (xj - xi) * (localY - yi) / (yj - yi) + xi);
+        if (intersect) inside = !inside;
+      }
+
+      return inside;
+    }
+
+    // Helper function to check if a line segment intersects the pentagon
+    function lineIntersectsPentagon(p1, p2) {
+      // Check if either endpoint is inside
+      if (isPointInsidePentagon(p1) || isPointInsidePentagon(p2)) {
+        return true;
+      }
+
+      // Sample points along the line segment with higher density for accuracy
+      const steps = 30; // Increased for better collision detection
+      for (let i = 1; i < steps; i++) {
+        const t = i / steps;
+        const point = new THREE.Vector3().lerpVectors(p1, p2, t);
+        if (isPointInsidePentagon(point)) {
+          return true;
+        }
+      }
+
+      // Additional check: calculate minimum distance from line to pentagon center
+      // If line gets too close to center, it likely passes through
+      const lineDir = new THREE.Vector3().subVectors(p2, p1).normalize();
+      const toCenter = new THREE.Vector3().subVectors(pentagonContainer.center, p1);
+      const projection = toCenter.dot(lineDir);
+
+      // Find closest point on line to pentagon center
+      const closestPoint = new THREE.Vector3().copy(p1).add(lineDir.multiplyScalar(Math.max(0, Math.min(projection, p1.distanceTo(p2)))));
+
+      // If closest point is inside pentagon, line intersects
+      if (isPointInsidePentagon(closestPoint)) {
+        return true;
+      }
+
+      return false;
+    }
+
+    // ========== TINY STATIC STARS (Bottom Layer - from what.html) ==========
+    const starGeometry = new THREE.BufferGeometry();
+    const starMaterial = new THREE.PointsMaterial({
+      color: 0xcccccc,
+      size: 0.05,
+      sizeAttenuation: true,
+      transparent: true,
+      opacity: 0.6
+    });
+
+    const starVertices = [];
+    for (let i = 0; i < 5000; i++) {
+      const x = (Math.random() - 0.5) * 200;
+      const y = (Math.random() - 0.5) * 200;
+      const z = (Math.random() - 0.5) * 200;
+      starVertices.push(x, y, z);
+    }
+
+    starGeometry.setAttribute('position', new THREE.Float32BufferAttribute(starVertices, 3));
+    const stars = new THREE.Points(starGeometry, starMaterial);
+    stars.renderOrder = -2; // Render first (furthest back)
+    scene.add(stars);
+    // ========== INVISIBLE NODE NETWORK WITH CONNECTION LINES ==========
+    // Create invisible nodes for connection lines throughout the entire screen
+    const nodeCount = 250; // Increased for more connections
+    const nodes = [];
+    const connections = [];
+
+    // Create invisible nodes distributed throughout the entire 3D space
+    for (let i = 0; i < nodeCount; i++) {
+      let validPosition = false;
+      let attempts = 0;
+      let node;
+
+      // Keep trying until we find a position outside the pentagon container
+      while (!validPosition && attempts < 50) {
+        const radius = 3 + Math.random() * 8;
+        const theta = Math.random() * Math.PI * 2;
+        const phi = Math.random() * Math.PI;
+
+        const testPosition = new THREE.Vector3(
+          radius * Math.sin(phi) * Math.cos(theta),
+          radius * Math.sin(phi) * Math.sin(theta),
+          (radius * Math.cos(phi)) - 3
+        );
+
+        // Check if position is outside the pentagon container
+        if (!isPointInsidePentagon(testPosition)) {
+          validPosition = true;
+          node = {
+            position: testPosition,
+            velocity: {
+              x: (Math.random() - 0.5) * 0.0015,
+              y: (Math.random() - 0.5) * 0.0015,
+              z: (Math.random() - 0.5) * 0.002
+            }
+          };
+        }
+
+        attempts++;
+      }
+
+      if (validPosition) {
+        nodes.push(node);
+      }
+    }
+
+    // Create connection lines between invisible nodes
+    function updateConnections() {
+      // Remove old connections
+      connections.forEach(conn => scene.remove(conn));
+      connections.length = 0;
+
+      // Create new connections based on distance
+      const maxDistance = 3.0; // Increased for more connections
+
+      for (let i = 0; i < nodes.length; i++) {
+        let connectionsCount = 0;
+
+        // Skip if this node is inside pentagon
+        if (isPointInsidePentagon(nodes[i].position)) continue;
+
+        for (let j = i + 1; j < nodes.length; j++) {
+          if (connectionsCount >= 6) break; // Increased limit for more connections per node
+
+          // Skip if other node is inside pentagon
+          if (isPointInsidePentagon(nodes[j].position)) continue;
+
+          const distance = nodes[i].position.distanceTo(nodes[j].position);
+
+          if (distance < maxDistance) {
+            // Check if line would pass through the pentagon container
+            const intersectsPentagon = lineIntersectsPentagon(nodes[i].position, nodes[j].position);
+
+            // Only create connection if it doesn't intersect pentagon
+            if (!intersectsPentagon) {
+              const geometry = new THREE.BufferGeometry().setFromPoints([
+                nodes[i].position,
+                nodes[j].position
+              ]);
+
+              // Calculate depth-based opacity
+              const avgZ = (nodes[i].position.z + nodes[j].position.z) / 2;
+              let depthOpacity;
+
+              if (avgZ > -3) {
+                depthOpacity = Math.max(0.15, Math.min(0.3, (avgZ + 5) / 8)); // Slightly reduced for denser network
+              } else {
+                depthOpacity = Math.max(0.06, Math.min(0.18, (avgZ + 12) / 12)); // Slightly reduced for denser network
+              }
+
+              const lineMaterial = new THREE.LineBasicMaterial({
+                color: 0x444444, // Darker gray for more subtle lines
+                transparent: true,
+                opacity: depthOpacity
+              });
+
+              const line = new THREE.Line(geometry, lineMaterial);
+              line.renderOrder = 0; // Render middle layer (between stars and knot)
+              connections.push(line);
+              scene.add(line);
+              connectionsCount++;
+            }
+          }
+        }
+      }
+    }
+
+    // Mouse tracking for parallax
+    let mouseX = 0;
+    let mouseY = 0;
+    let targetRotationX = 0;
+    let targetRotationY = 0;
+
+    document.addEventListener('mousemove', (event) => {
+      mouseX = (event.clientX / window.innerWidth) * 2 - 1;
+      mouseY = -(event.clientY / window.innerHeight) * 2 + 1;
+
+      targetRotationX = mouseY * 0.1;
+      targetRotationY = mouseX * 0.1;
+    });
+
+    // Animation loop
+    let frame = 0;
+    function animate() {
+      requestAnimationFrame(animate);
+      frame++;
+
+      // Torus knot rotation (from what.html)
+      torusKnot.rotation.x += 0.001;
+      torusKnot.rotation.y += 0.002;
+
+      // Rotate pentagon container slowly
+      pentagonContainer.rotation += 0.002;
+
+      // Rotate visible pentagon mesh to match
+      pentagonMesh.rotation.z = pentagonContainer.rotation;
+
+      // Add subtle mouse-based rotation
+      torusKnot.rotation.x += (targetRotationX - torusKnot.rotation.x) * 0.02;
+      torusKnot.rotation.y += (targetRotationY - torusKnot.rotation.y) * 0.02;
+
+      // Rotate stars very slowly (from what.html)
+      stars.rotation.y += 0.0001;
+
+      // Move invisible nodes dynamically (creates moving connection lines)
+      nodes.forEach((node, index) => {
+        node.position.x += node.velocity.x;
+        node.position.y += node.velocity.y;
+        node.position.z += node.velocity.z;
+
+        // Add forward/backward wave motion for depth effect
+        // Creates a rippling motion across the network
+        const wavePhase = frame * 0.008 + index * 0.05;
+        node.position.z += Math.sin(wavePhase) * 0.008;
+
+        // Add subtle circular motion for organic feel
+        node.position.x += Math.cos(wavePhase * 0.5) * 0.002;
+        node.position.y += Math.sin(wavePhase * 0.5) * 0.002;
+
+        // Check if node is inside pentagon and push it out
+        if (isPointInsidePentagon(node.position)) {
+          // Calculate direction away from pentagon center
+          const direction = node.position.clone().normalize();
+          // Push node outside the pentagon
+          const pushDistance = pentagonRadius + 0.5;
+          node.position.copy(direction.multiplyScalar(pushDistance));
+
+          // Reverse velocity to move away
+          node.velocity.x *= -1.2;
+          node.velocity.y *= -1.2;
+          node.velocity.z *= -1.2;
+        }
+
+        // Bounce off boundaries (entire screen space)
+        if (Math.abs(node.position.x) > 12) node.velocity.x *= -1;
+        if (Math.abs(node.position.y) > 12) node.velocity.y *= -1;
+
+        // Keep nodes in full depth range (front to back)
+        if (node.position.z > 3) {
+          node.position.z = 3;
+          node.velocity.z *= -1;
+        }
+        if (node.position.z < -12) {
+          node.position.z = -12;
+          node.velocity.z *= -1;
+        }
+      });
+
+      // Update connections less frequently to prevent flickering
+      if (frame % 4 === 0) {
+        updateConnections();
+      }
+
+      // Subtle camera movement
+      camera.position.x += (mouseX * 0.5 - camera.position.x) * 0.02;
+      camera.position.y += (mouseY * 0.5 - camera.position.y) * 0.02;
+      camera.lookAt(scene.position);
+
+      renderer.render(scene, camera);
+    }
+
+    // Handle window resize
+    window.addEventListener('resize', () => {
+      camera.aspect = window.innerWidth / window.innerHeight;
+      camera.updateProjectionMatrix();
+      renderer.setSize(window.innerWidth, window.innerHeight);
+    });
+
+    // Start animation
+    animate();
+    updateConnections();
+  </script>
+</body>
+
+</html>
